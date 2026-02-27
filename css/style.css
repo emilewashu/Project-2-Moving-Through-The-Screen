@@ -8,11 +8,5 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: #f0f0f0;
-}
-
-#scroll-container {
-  width: 7000px;
-  height: 100vh;
+  background: #000000;
 }
