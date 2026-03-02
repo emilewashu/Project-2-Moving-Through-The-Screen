@@ -33,14 +33,17 @@ let womenInterval = 6;
 let catTrail = [];
 let catText = "zzzzzzzz";
 let catIndex = 0;
-let catInterval = 30;
+let catInterval = 100;
+
+let dogTrail = [];
 
 const collageWidth = 1500;
 const collageHeight = 5300;
 
-//shake effect variables
 let shakeDuration = 0;
 let shakeTimer = 0;
+
+let spanishClothes;
 
 function preload() {
   myFont = loadFont("assets/font.ttf");
@@ -56,7 +59,8 @@ function preload() {
   woman2 = loadImage("assets/woman2.png");
 
   facade = loadImage("assets/newfacade.png");
-  cat = loadImage("assets/cat.gif");
+  cat = loadImage("assets/catsleeping.png");
+  dog = loadImage("assets/dog.png");
 
   street = loadImage("assets/palacestreet.png");
   guard = loadImage("assets/guard.png");
@@ -66,20 +70,79 @@ function preload() {
   metrocar = loadImage("assets/metrocar.jpg");
 }
 
-// =========================
-// SETUP
-// =========================
 function setup() {
   createCanvas(windowWidth, windowHeight);
   pixelDensity(1);
   startTime = millis();
+  spanishClothes = [
+    {
+      word: "camisa",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "camiseta",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "pantalones",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "falda",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "vestido",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "chaqueta",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "abrigo",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "zapatos",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "blusa",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+    {
+      word: "bufanda",
+      r: floor(random(0, 255)),
+      g: floor(random(0, 255)),
+      b: floor(random(0, 255)),
+    },
+  ];
 }
+
 function draw() {
-  background(0);
+  background(255);
   const centerX = (width - collageWidth) / 2;
   const offsetY = -scrollY;
 
-  //shake effect trigger at metro scene
   if (scrollY > 3000 && shakeTimer <= 0) {
     shakeDuration = 40;
     shakeTimer = shakeDuration;
@@ -129,7 +192,7 @@ function drawSkyScene(centerX, offsetY) {
   const yPlane = lerp(400, -200, progress);
 
   // ------------------------------------
-  // ADD LETTERS AT INTERVAL
+  // DRAW PLANE LETTERS
   // ------------------------------------
   if (frameCount % letterInterval === 0) {
     // PLANE LETTER
@@ -144,10 +207,6 @@ function drawSkyScene(centerX, offsetY) {
 
     planeIndex = (planeIndex + 1) % planeText.length;
   }
-
-  // ------------------------------------
-  // DRAW PLANE LETTERS (rotated)
-  // ------------------------------------
 
   textAlign(CENTER, CENTER);
   textFont(myFont);
@@ -205,7 +264,9 @@ function drawSkyScene(centerX, offsetY) {
     if (moveY <= 0) growing = true;
   }
 
-  //Draw women
+  // ------------------------------------
+  // DRAW WOMEN
+  // ------------------------------------
   if (frameCount % womenInterval === 0) {
     let word = womenText.charAt(womenIndex);
 
@@ -221,8 +282,8 @@ function drawSkyScene(centerX, offsetY) {
     womenIndex = (womenIndex + 1) % womenText.length;
   }
 
-  image(woman1, centerX + 600, offsetY + 850 + moveY, 150, 180);
-  image(woman2, centerX + 800, offsetY + 850 + moveY, 140, 180);
+  image(woman1, centerX + 600, offsetY + 850 + moveY, 140, 200);
+  image(woman2, centerX + 800, offsetY + 850 + moveY, 140, 200);
 
   for (let i = womenTrail.length - 1; i >= 0; i--) {
     let t = womenTrail[i];
@@ -255,8 +316,17 @@ function drawTransition(centerX, offsetY) {
     let word = catText.charAt(catIndex);
 
     catTrail.push({
-      x: centerX + 350,
-      y: 1340,
+      x: centerX + 300,
+      y: 1360,
+      vx: 0.5,
+      vy: -2.5,
+      life: 255,
+      letter: word,
+    });
+
+    dogTrail.push({
+      x: centerX + 1240,
+      y: 1330,
       vx: 0.5,
       vy: -2.5,
       life: 255,
@@ -265,13 +335,25 @@ function drawTransition(centerX, offsetY) {
 
     catIndex = (catIndex + 1) % catText.length;
   }
+
+  image(dog, centerX + 1220, offsetY + 1340, 150, 120);
+  image(cat, centerX + 260, offsetY + 1380, 100, 50);
+
   for (let i = catTrail.length - 1; i >= 0; i--) {
     let t = catTrail[i];
+    let d = dogTrail[i];
 
+    // Update cat
     t.x += t.vx;
     t.y += t.vy;
     t.life -= 2;
 
+    // Update dog
+    d.x += d.vx;
+    d.y += d.vy;
+    d.life -= 2;
+
+    // ---- DRAW CAT ----
     push();
     translate(t.x, t.y + offsetY);
     textAlign(CENTER, CENTER);
@@ -280,11 +362,75 @@ function drawTransition(centerX, offsetY) {
     text(t.letter, 0, 0);
     pop();
 
+    // ---- DRAW DOG ----
+    push();
+    translate(d.x, d.y + offsetY);
+    textAlign(CENTER, CENTER);
+    textSize(40);
+    fill(0, 200, 255, d.life);
+    text(d.letter, 0, 0);
+    pop();
+
     if (t.life <= 0 || t.x > width + 200 || t.y < -200) {
       catTrail.splice(i, 1);
+      dogTrail.splice(i, 1);
     }
   }
-  image(cat, centerX + 260, offsetY + 1340, 100, 100);
+
+  // ------------------------------------
+  // DRAW CLOTHESLINE
+  // ------------------------------------
+  stroke(0);
+  strokeWeight(4);
+  noFill();
+
+  bezier(
+    centerX + 300, //x1
+    offsetY + 1600, //y1
+    centerX + 600, //x2
+    offsetY + 1750, //y2
+    centerX + 1050, //x3
+    offsetY + 1750, //y3
+    centerX + 1300, //x4
+    offsetY + 1600 //y4
+  );
+
+  let t = 0.5;
+  let x1 = centerX + 300;
+  let y1 = offsetY + 1600;
+
+  let x2 = centerX + 600;
+  let y2 = offsetY + 1750;
+
+  let x3 = centerX + 1050;
+  let y3 = offsetY + 1750;
+
+  let x4 = centerX + 1300;
+  let y4 = offsetY + 1600;
+
+  for (let i = 0; i < spanishClothes.length; i++) {
+    let t = 0.05 + i * 0.1;
+
+    let bx = bezierPoint(x1, x2, x3, x4, t);
+    let by = bezierPoint(y1, y2, y3, y4, t);
+
+    let tx = bezierTangent(x1, x2, x3, x4, t);
+    let ty = bezierTangent(y1, y2, y3, y4, t);
+    let angle = atan2(ty, tx);
+
+    let windOffset = sin(frameCount * 0.05 + i) * 0.3;
+    if (i % 2 === 0) windOffset *= -1;
+
+    push();
+    translate(bx, by);
+    rotate(angle + windOffset + PI / 2);
+    strokeWeight(2);
+    textSize(32);
+    fill(spanishClothes[i].r, spanishClothes[i].g, spanishClothes[i].b);
+    textAlign(TOP, TOP);
+    text(spanishClothes[i].word, 0, 0);
+    pop();
+  }
 }
 
 function drawStreetScene(centerX, offsetY) {
