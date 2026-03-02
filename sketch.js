@@ -161,7 +161,11 @@ function drawSkyScene(centerX, offsetY) {
     push();
     translate(t.x, t.y + offsetY);
     rotate(-PI / 20);
-    fill(150, 0, 40, map(t.life, 0, trailLifetime, 0, 255));
+    if (i % 2 === 0) {
+      fill(150, 0, 40, map(t.life, 0, trailLifetime, 0, 255));
+    } else {
+      fill(255, 220, 0, map(t.life, 0, trailLifetime, 0, 255));
+    }
     text(t.letter, 0, 0);
     pop();
 
@@ -192,7 +196,7 @@ function drawSkyScene(centerX, offsetY) {
   // DRAW POOL
   // ------------------------------------
 
-  image(pool, centerX - 10, offsetY + 650, collageWidth + 20, 550);
+  image(pool, centerX, offsetY + 650, collageWidth, 550);
   if (growing) {
     moveY += 0.2;
     if (moveY >= 40) growing = false;
@@ -253,7 +257,7 @@ function drawTransition(centerX, offsetY) {
     catTrail.push({
       x: centerX + 350,
       y: 1340,
-      vx: 2.5,
+      vx: 0.5,
       vy: -2.5,
       life: 255,
       letter: word,
@@ -291,8 +295,10 @@ function drawStreetScene(centerX, offsetY) {
 
 function drawMetroScene(centerX, offsetY) {
   image(concretewall, centerX, offsetY + 2650, collageWidth, 150);
+  text("placeholder", centerX + 700, offsetY + 2725);
   image(metrostairs, centerX, offsetY + 2800, collageWidth, 1200);
   image(concretewall, centerX, offsetY + 3900, collageWidth, 150);
+  text("placeholder", centerX + 800, offsetY + 3975);
   image(metrocar, centerX, offsetY + 4050, collageWidth, 1200);
 }
 
