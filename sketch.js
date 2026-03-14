@@ -4,8 +4,10 @@
 let sky, sun, birds, plane;
 let pool, barwindow, woman1, woman2;
 let facade, cat;
-let street, guard;
-let concretewall, metrostairs, metrocar;
+let street, guard, cycler, scooter, performer, pigeon, crowd;
+let group1, group2, group3;
+let metrosign, metroimage1, metroimage2, metroimage3, homeless;
+let concretewall, metrostairs, metrocar, graffiti;
 
 // =========================
 // GLOBALS
@@ -45,6 +47,14 @@ let shakeTimer = 0;
 
 let spanishClothes;
 
+let musicText = "♩♬♭♫♯≭";
+let musicTrail = [];
+
+let homelessTrail = [];
+let homelessText = "zzzzzz";
+let homelessIndex = 0;
+let homelessInterval = 80;
+
 function preload() {
   myFont = loadFont("assets/font.ttf");
 
@@ -62,12 +72,25 @@ function preload() {
   cat = loadImage("assets/catsleeping.png");
   dog = loadImage("assets/dog.png");
 
-  street = loadImage("assets/palacestreet.png");
+  street = loadImage("assets/palace.png");
   guard = loadImage("assets/guard.png");
+  cycler = loadImage("assets/cycler.png");
+  crowd = loadImage("assets/crowd.png");
 
-  concretewall = loadImage("assets/concretewall.png");
+  group1 = loadImage("assets/group1.png");
+  group2 = loadImage("assets/group2.png");
+
+  metroimage1 = loadImage("assets/metroimage1.jpg");
+
   metrostairs = loadImage("assets/metrostairs.png");
   metrocar = loadImage("assets/metrocar.jpg");
+  metrosign = loadImage("assets/metrosign.png");
+  graffiti = loadImage("assets/graffiti.png");
+  homeless = loadImage("assets/homeless.png");
+
+  performer = loadImage("assets/performer.png");
+  pigeon = loadImage("assets/pigeon.gif");
+  scooter = loadImage("assets/scooter.webp");
 }
 
 function setup() {
@@ -435,17 +458,157 @@ function drawTransition(centerX, offsetY) {
 
 function drawStreetScene(centerX, offsetY) {
   image(street, centerX, offsetY + 1750, collageWidth, 1000);
+  // --- GUARDS ---
+  tint(0, 100);
+  image(guard, centerX + 510, offsetY + 2300, 100, 250);
+  noTint();
   image(guard, centerX + 500, offsetY + 2300, 100, 250);
+
+  tint(0, 100);
+  image(guard, centerX + 910, offsetY + 2300, 100, 250);
+  noTint();
   image(guard, centerX + 900, offsetY + 2300, 100, 250);
+
+  // --- PIGEONS ---
+  let moveY = sin(frameCount * 0.1) * 3;
+  let moveY2 = sin(frameCount * 0.07) * 3;
+
+  image(pigeon, centerX + 1250, offsetY + 2490 + moveY2, 60, 60);
+  image(pigeon, centerX + 1300, offsetY + 2500 + moveY2, 60, 60);
+  image(pigeon, centerX + 1270, offsetY + 2480 + moveY, 60, 60);
+  image(pigeon, centerX + 1350, offsetY + 2480 + moveY, 60, 60);
+
+  // --- CROWD ---
+  image(performer, centerX + 110, offsetY + 2310, 290, 250);
+  let moveX = sin(frameCount * 0.05) * 3;
+  image(crowd, centerX + 230 + moveX, offsetY + 2310, 270, 270);
+  image(group1, centerX + 1000, offsetY + 2320, 280, 280);
+
+  tint(0, 100);
+  image(group2, centerX + 570, offsetY + 2550, 250, 50);
+  noTint();
+  image(group2, centerX + 600, offsetY + 2350, 250, 250);
+
+  // --- MUSIC TRAIL ---
+  let performerX = centerX + 180;
+  let performerY = 2310;
+  if (frameCount % 12 === 0) {
+    let note = musicText.charAt(floor(random(musicText.length)));
+
+    musicTrail.push({
+      x: performerX + 40,
+      y: performerY + 40,
+      vx: random(-0.5, 0.5),
+      vy: random(-1.5, -2.5),
+      life: 255,
+      size: random(28, 42),
+      letter: note,
+    });
+  }
+
+  for (let i = musicTrail.length - 1; i >= 0; i--) {
+    let m = musicTrail[i];
+
+    m.x += m.vx;
+    m.y += m.vy;
+    m.life -= 3;
+
+    push();
+    translate(m.x, m.y + offsetY);
+    textAlign(CENTER, CENTER);
+    textFont("Georgia");
+    textSize(m.size);
+    fill(255, 0, 0, m.life);
+    text(m.letter, 0, 0);
+    pop();
+
+    if (m.life <= 0) {
+      musicTrail.splice(i, 1);
+    }
+  }
+
+  // --- CYCLER MOVEMENT ---
+  const elapsed = (millis() - startTime) % 16000;
+  const progress = elapsed / 15000;
+  const xCycler = lerp(centerX + collageWidth, centerX - 250, progress);
+  const xScooter = lerp(centerX - 250, centerX + collageWidth, progress);
+  scooter.loadPixels();
+  for (let i = 0; i < scooter.pixels.length; i += 4) {
+    let r = scooter.pixels[i];
+    let g = scooter.pixels[i + 1];
+    let b = scooter.pixels[i + 2];
+    if (r > 180 && g > 180 && b > 180) {
+      scooter.pixels[i + 3] = 0;
+    }
+  }
+  scooter.updatePixels();
+
+  tint(0, 150);
+  image(scooter, xScooter - 20, offsetY + 2600, 300, 50);
+  noTint();
+  image(scooter, xScooter, offsetY + 2370, 300, 300);
+
+  tint(0, 150);
+  image(cycler, xCycler + 20, offsetY + 2650, 250, 50);
+  noTint();
+  image(cycler, xCycler, offsetY + 2450, 250, 250);
 }
 
 function drawMetroScene(centerX, offsetY) {
-  image(concretewall, centerX, offsetY + 2650, collageWidth, 150);
-  text("placeholder", centerX + 700, offsetY + 2725);
-  image(metrostairs, centerX, offsetY + 2800, collageWidth, 1200);
-  image(concretewall, centerX, offsetY + 3900, collageWidth, 150);
-  text("placeholder", centerX + 800, offsetY + 3975);
-  image(metrocar, centerX, offsetY + 4050, collageWidth, 1200);
+  image(metrosign, centerX + 500, offsetY + 2080, 480, 700);
+  image(metrostairs, centerX, offsetY + 2520, collageWidth, 1220);
+
+  //graffiti
+  push();
+
+  translate(centerX + 220, offsetY + 2950);
+  rotate(PI / 13);
+  tint(0, 200);
+  imageMode(CENTER);
+  image(graffiti, 0, 0, 350, 350);
+  imageMode(CORNER);
+  pop();
+
+  let homelessX = centerX + 1000;
+  let homelessY = 3170;
+
+  if (frameCount % homelessInterval === 0) {
+    let letter = homelessText.charAt(homelessIndex);
+
+    homelessTrail.push({
+      x: homelessX + 150,
+      y: homelessY + 40,
+      vx: random(-0.2, 0.2),
+      vy: -1.5,
+      life: 255,
+      size: random(30, 45),
+      letter: letter,
+    });
+
+    homelessIndex = (homelessIndex + 1) % homelessText.length;
+  }
+  for (let i = homelessTrail.length - 1; i >= 0; i--) {
+    let z = homelessTrail[i];
+
+    z.x += z.vx;
+    z.y += z.vy;
+    z.life -= 2;
+
+    push();
+    translate(z.x, z.y + offsetY);
+    textAlign(CENTER, CENTER);
+    textSize(z.size);
+    fill(120, 120, 255, z.life);
+    text(z.letter, 0, 0);
+    pop();
+
+    if (z.life <= 0) {
+      homelessTrail.splice(i, 1);
+    }
+  }
+  image(homeless, centerX + 1000, offsetY + 3170, 300, 400);
+
+  image(metrocar, centerX, offsetY + 3740, collageWidth, 1200);
 }
 
 // =========================
