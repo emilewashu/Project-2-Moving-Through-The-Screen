@@ -8,7 +8,7 @@ let street, guard, cycler, scooter, performer, pigeon, crowd;
 let group1, group2, metrogroup, ticketbooth;
 let metrosign, metroimage1, ticketgate, homeless, confusedman, manonphone;
 let concretewall, metrostairs, graffiti, walking, stairs;
-let tracks, train;
+let train;
 
 // =========================
 // SOUNDS
@@ -46,7 +46,7 @@ let catInterval = 100;
 let dogTrail = [];
 
 const collageWidth = 1500;
-const collageHeight = 5000;
+const collageHeight = 5125;
 
 let shakeDuration = 0;
 let shakeTimer = 0;
@@ -76,6 +76,7 @@ let weatherData = "weather data not loaded";
 
 let textAlpha = 0;
 let fadeSpeed = 5;
+let skyExtra = 600;
 
 // fetch(apiUrl)
 //   .then((response) => {
@@ -135,7 +136,6 @@ function preload() {
   pigeon = loadImage("assets/photos/pigeon.gif");
   scooter = loadImage("assets/photos/scooter.webp");
 
-  tracks = loadImage("assets/photos/track.png");
   train = loadImage("assets/photos/train.png");
   ticketbooth = loadImage("assets/photos/ticketbooth.png");
 
@@ -248,14 +248,6 @@ function draw() {
   //   planeSound.setVolume(vol, 0.5);
   //   poolSound.setVolume(vol, 0.5);
   // }
-
-  // Draw a border around the canvas
-  push();
-  stroke(255);
-  strokeWeight(4);
-  noFill();
-  rect(centerX, offsetY, collageWidth, collageHeight);
-  pop();
 }
 
 function drawSkyScene(centerX, offsetY) {
@@ -282,12 +274,12 @@ function drawSkyScene(centerX, offsetY) {
   if (textAlpha > 0) {
     textAlign(CENTER, CENTER);
     textFont(myFont);
-    textSize(42);
+    textSize(60);
     textStyle(BOLD);
     noStroke();
 
     fill(0, 76, 155, textAlpha);
-    text(weatherData, centerX + 775, offsetY + 400);
+    text(weatherData, centerX + 775, offsetY + 650);
   }
   if (growing) {
     sunSize += 1;
@@ -355,7 +347,7 @@ function drawSkyScene(centerX, offsetY) {
   // ------------------------------------
   // DRAW BIRDS
   // ------------------------------------
-  image(birds, xBirds, offsetY + 400, 200, 200);
+  image(birds, xBirds, offsetY + 800, 400, 400);
 
   // ------------------------------------
   // DRAW PLANE (fixed rotation origin)
@@ -372,7 +364,7 @@ function drawSkyScene(centerX, offsetY) {
   // DRAW POOL
   // ------------------------------------
 
-  image(pool, centerX, offsetY + 650, collageWidth, 550);
+  image(pool, centerX, offsetY + 1250, collageWidth, 550);
   if (growing) {
     moveY += 0.2;
     if (moveY >= 40) growing = false;
@@ -389,7 +381,7 @@ function drawSkyScene(centerX, offsetY) {
 
     womenTrail.push({
       x: random([centerX + 700, centerX + 900]),
-      y: 850 + moveY,
+      y: 1450 + moveY,
       vx: 2.5,
       vy: -2.5,
       life: 255,
@@ -399,8 +391,8 @@ function drawSkyScene(centerX, offsetY) {
     womenIndex = (womenIndex + 1) % womenText.length;
   }
 
-  image(woman1, centerX + 600, offsetY + 850 + moveY, 140, 200);
-  image(woman2, centerX + 800, offsetY + 850 + moveY, 140, 200);
+  image(woman1, centerX + 600, offsetY + 1450 + moveY, 140, 200);
+  image(woman2, centerX + 800, offsetY + 1450 + moveY, 140, 200);
 
   for (let i = womenTrail.length - 1; i >= 0; i--) {
     let t = womenTrail[i];
@@ -423,18 +415,18 @@ function drawSkyScene(centerX, offsetY) {
     }
   }
 
-  image(barwindow, centerX - 10, offsetY + 950, collageWidth + 20, 250);
+  image(barwindow, centerX - 10, offsetY + 1550, collageWidth + 20, 250);
 }
 
 function drawTransition(centerX, offsetY) {
-  image(facade, centerX, offsetY + 1200, collageWidth, 1000);
+  image(facade, centerX, offsetY + 1800, collageWidth, 1000);
 
   if (frameCount % catInterval === 0) {
     let word = catText.charAt(catIndex);
 
     catTrail.push({
       x: centerX + 300,
-      y: 1360,
+      y: 1960,
       vx: 0.5,
       vy: -2.5,
       life: 255,
@@ -443,7 +435,7 @@ function drawTransition(centerX, offsetY) {
 
     dogTrail.push({
       x: centerX + 1240,
-      y: 1330,
+      y: 1930,
       vx: 0.5,
       vy: -2.5,
       life: 255,
@@ -453,8 +445,8 @@ function drawTransition(centerX, offsetY) {
     catIndex = (catIndex + 1) % catText.length;
   }
 
-  image(dog, centerX + 1220, offsetY + 1340, 150, 120);
-  image(cat, centerX + 260, offsetY + 1380, 100, 50);
+  image(dog, centerX + 1220, offsetY + 1940, 150, 120);
+  image(cat, centerX + 260, offsetY + 1980, 100, 50);
 
   for (let i = catTrail.length - 1; i >= 0; i--) {
     let t = catTrail[i];
@@ -503,27 +495,27 @@ function drawTransition(centerX, offsetY) {
 
   bezier(
     centerX + 300, //x1
-    offsetY + 1600, //y1
+    offsetY + 2200, //y1
     centerX + 600, //x2
-    offsetY + 1750, //y2
+    offsetY + 2350, //y2
     centerX + 1050, //x3
-    offsetY + 1750, //y3
+    offsetY + 2350, //y3
     centerX + 1300, //x4
-    offsetY + 1600 //y4
+    offsetY + 2200 //y4
   );
 
   let t = 0.5;
   let x1 = centerX + 300;
-  let y1 = offsetY + 1600;
+  let y1 = offsetY + 2200;
 
   let x2 = centerX + 600;
-  let y2 = offsetY + 1750;
+  let y2 = offsetY + 2350;
 
   let x3 = centerX + 1050;
-  let y3 = offsetY + 1750;
+  let y3 = offsetY + 2350;
 
   let x4 = centerX + 1300;
-  let y4 = offsetY + 1600;
+  let y4 = offsetY + 2200;
 
   for (let i = 0; i < spanishClothes.length; i++) {
     let t = 0.05 + i * 0.1;
@@ -551,41 +543,41 @@ function drawTransition(centerX, offsetY) {
 }
 
 function drawStreetScene(centerX, offsetY) {
-  image(street, centerX, offsetY + 1750, collageWidth, 1000);
+  image(street, centerX, offsetY + 1750 + 600, collageWidth, 1000);
   // --- GUARDS ---
   tint(0, 100);
-  image(guard, centerX + 510, offsetY + 2300, 100, 250);
+  image(guard, centerX + 510, offsetY + 2300 + 600, 100, 250);
   noTint();
-  image(guard, centerX + 500, offsetY + 2300, 100, 250);
+  image(guard, centerX + 500, offsetY + 2300 + 600, 100, 250);
 
   tint(0, 100);
-  image(guard, centerX + 910, offsetY + 2300, 100, 250);
+  image(guard, centerX + 910, offsetY + 2300 + 600, 100, 250);
   noTint();
-  image(guard, centerX + 900, offsetY + 2300, 100, 250);
+  image(guard, centerX + 900, offsetY + 2300 + 600, 100, 250);
 
   // --- PIGEONS ---
   let moveY = sin(frameCount * 0.1) * 3;
   let moveY2 = sin(frameCount * 0.07) * 3;
 
-  image(pigeon, centerX + 1250, offsetY + 2490 + moveY2, 60, 60);
-  image(pigeon, centerX + 1300, offsetY + 2500 + moveY2, 60, 60);
-  image(pigeon, centerX + 1270, offsetY + 2480 + moveY, 60, 60);
-  image(pigeon, centerX + 1350, offsetY + 2480 + moveY, 60, 60);
+  image(pigeon, centerX + 1250, offsetY + 2490 + moveY2 + 600, 60, 60);
+  image(pigeon, centerX + 1300, offsetY + 2500 + moveY2 + 600, 60, 60);
+  image(pigeon, centerX + 1270, offsetY + 2480 + moveY + 600, 60, 60);
+  image(pigeon, centerX + 1350, offsetY + 2480 + moveY + 600, 60, 60);
 
   // --- CROWD ---
-  image(performer, centerX + 110, offsetY + 2310, 290, 250);
+  image(performer, centerX + 110, offsetY + 2310 + 600, 290, 250);
   let moveX = sin(frameCount * 0.05) * 3;
-  image(crowd, centerX + 230 + moveX, offsetY + 2310, 270, 270);
-  image(group1, centerX + 1000, offsetY + 2320, 280, 280);
+  image(crowd, centerX + 230 + moveX, offsetY + 2310 + 600, 270, 270);
+  image(group1, centerX + 1000, offsetY + 2320 + 600, 280, 280);
 
   tint(0, 100);
-  image(group2, centerX + 570, offsetY + 2550, 250, 50);
+  image(group2, centerX + 570, offsetY + 2550 + 600, 250, 50);
   noTint();
-  image(group2, centerX + 600, offsetY + 2350, 250, 250);
+  image(group2, centerX + 600, offsetY + 2350 + 600, 250, 250);
 
   // --- MUSIC TRAIL ---
   let performerX = centerX + 180;
-  let performerY = 2310;
+  let performerY = 2310 + 600;
   if (frameCount % 12 === 0) {
     let note = musicText.charAt(floor(random(musicText.length)));
 
@@ -638,24 +630,24 @@ function drawStreetScene(centerX, offsetY) {
   scooter.updatePixels();
 
   tint(0, 150);
-  image(scooter, xScooter - 20, offsetY + 2600, 300, 50);
+  image(scooter, xScooter - 20, offsetY + 2600 + 600, 300, 50);
   noTint();
-  image(scooter, xScooter, offsetY + 2370, 300, 300);
+  image(scooter, xScooter, offsetY + 2370 + 600, 300, 300);
 
   tint(0, 150);
-  image(cycler, xCycler + 20, offsetY + 2650, 250, 50);
+  image(cycler, xCycler + 20, offsetY + 2650 + 600, 250, 50);
   noTint();
-  image(cycler, xCycler, offsetY + 2450, 250, 250);
+  image(cycler, xCycler, offsetY + 2450 + 600, 250, 250);
 }
 
 function drawMetroEntranceScene(centerX, offsetY) {
-  image(metrosign, centerX + 470, offsetY + 2080, 550, 700);
-  image(metrostairs, centerX, offsetY + 2520, collageWidth, 1220);
-  image(stairs, centerX, offsetY + 3720, collageWidth, 800);
+  image(metrosign, centerX + 470, offsetY + 2080 + 600, 550, 700);
+  image(metrostairs, centerX, offsetY + 2520 + 600, collageWidth, 1220);
+  image(stairs, centerX, offsetY + 3720 + 600, collageWidth, 800);
 
   /// --- METRO SIGN ---
   push();
-  translate(centerX + 1250, offsetY + 2930);
+  translate(centerX + 1250, offsetY + 2930 + 600);
   imageMode(CENTER);
   rotate(PI / 15);
   image(metroimage1, 0, 0, 450, 1100);
@@ -664,7 +656,7 @@ function drawMetroEntranceScene(centerX, offsetY) {
 
   // --- HOMELESS MOVEMENT ---
   let homelessX = centerX + 880;
-  let homelessY = 2825;
+  let homelessY = 2825 + 600;
 
   if (frameCount % homelessInterval === 0) {
     let letter = homelessText.charAt(homelessIndex);
@@ -700,7 +692,7 @@ function drawMetroEntranceScene(centerX, offsetY) {
       homelessTrail.splice(i, 1);
     }
   }
-  image(homeless, centerX + 850, offsetY + 2900, 350, 500);
+  image(homeless, centerX + 850, offsetY + 2900 + 600, 350, 500);
 
   // --- WALKING MOVEMENT ---
   if (scrollY > 2000) {
@@ -709,8 +701,8 @@ function drawMetroEntranceScene(centerX, offsetY) {
   }
 
   let startX = centerX + 600;
-  let startY = offsetY + 2850;
-  let endY = offsetY + 2450;
+  let startY = offsetY + 2850 + 600;
+  let endY = offsetY + 2450 + 600;
   let stepBounce = sin(frameCount * 0.25) * 6;
 
   let y = lerp(startY, endY, stairProgress) + stepBounce;
@@ -723,10 +715,17 @@ function drawMetroEntranceScene(centerX, offsetY) {
   pop();
 
   // --- METRO GATES ---
-  image(ticketgate, centerX - 50, offsetY + 3280, 650, 600);
-  image(ticketgate, centerX + 280, offsetY + 3280, 650, 600);
-  image(ticketgate, centerX + 610, offsetY + 3280, 650, 600);
-  image(ticketgate, centerX + 940, offsetY + 3280, 650, 600);
+  push();
+  translate(centerX + 150, offsetY + 3900); // move origin to where you want the image
+  rotate(-PI / 6);
+  imageMode(CENTER);
+  image(ticketbooth, 0, 0, 500, 700);
+  imageMode(CORNER);
+  pop();
+  image(ticketgate, centerX - 50, offsetY + 3280 + 600, 650, 600);
+  image(ticketgate, centerX + 280, offsetY + 3280 + 600, 650, 600);
+  image(ticketgate, centerX + 610, offsetY + 3280 + 600, 650, 600);
+  image(ticketgate, centerX + 940, offsetY + 3280 + 600, 650, 600);
 
   let gatePositions = [
     centerX + 250,
@@ -734,13 +733,14 @@ function drawMetroEntranceScene(centerX, offsetY) {
     centerX + 950,
     centerX + 1300,
   ];
+  
 
   if (frameCount % 50 === 0) {
     let gateX = random(gatePositions);
 
     gateTrail.push({
       x: gateX,
-      y: 3320,
+      y: 3320 + 600,
       vx: random(-2, 2),
       vy: random(-3, -1),
       life: 255,
@@ -767,10 +767,7 @@ function drawMetroEntranceScene(centerX, offsetY) {
     }
   }
 }
-
 function drawMetroCarScene(centerX, offsetY) {
-  image(tracks, centerX - 150, offsetY + 4150, 1800, 700);
-
   //--- TRAIN MOVEMENT ---
   const duration = 7000;
   const elapsed = (millis() - startTime) % duration;
@@ -779,7 +776,7 @@ function drawMetroCarScene(centerX, offsetY) {
 
   // --- TRAIN HEADLIGHTS ---
   let headlightX = xTrain;
-  let headlightY = offsetY + 3950;
+  let headlightY = offsetY + 3950 + 600;
 
   noStroke();
 
@@ -791,7 +788,7 @@ function drawMetroCarScene(centerX, offsetY) {
   }
 
   let metroX = centerX + 150 + 600;
-  let metroY = offsetY + 3400 + 325;
+  let metroY = offsetY + 3400 + 325 + 600;
 
   let d = dist(metroX, metroY, headlightX, headlightY);
 
@@ -801,7 +798,7 @@ function drawMetroCarScene(centerX, offsetY) {
 
   push();
   tint(brightness, brightness, brightness);
-  image(metrogroup, centerX + 150, offsetY + 3400, 1200, 650);
+  image(metrogroup, centerX + 150, offsetY + 3400 + 600, 1200, 650);
   pop();
 
   // --- SHAKE LOGIC ---
@@ -812,7 +809,7 @@ function drawMetroCarScene(centerX, offsetY) {
     shakeY = random(-3, 3);
   }
 
-  image(train, xTrain, offsetY + 3720, 6000, 800);
+  image(train, xTrain, offsetY + 3720 + 600, 6000, 800);
 }
 
 // =========================
