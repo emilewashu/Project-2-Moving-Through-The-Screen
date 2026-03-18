@@ -1,14 +1,19 @@
 // =========================
-// ASSETS
+// PICTURES
 // =========================
 let sky, sun, birds, plane;
 let pool, barwindow, woman1, woman2;
 let facade, cat;
 let street, guard, cycler, scooter, performer, pigeon, crowd;
-let group1, group2, metrogroup;
+let group1, group2, metrogroup, ticketbooth;
 let metrosign, metroimage1, ticketgate, homeless, confusedman, manonphone;
 let concretewall, metrostairs, graffiti, walking, stairs;
 let tracks, train;
+
+// =========================
+// SOUNDS
+// =========================
+let birdSound, planeSound, poolSound;
 
 // =========================
 // GLOBALS
@@ -64,7 +69,33 @@ let gateWords = ["BEEP!", "VALIDADO!", "TAP!", "SUBE!", "PUERTA!", "CERRADA!"];
 let shakeX = 0;
 let shakeY = 0;
 
+const apiKey = "08a2ae66eca7e7265b08e9f22438f81f";
+const city = "Madrid";
+const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+let weatherData = "weather data not loaded";
+
+let textAlpha = 0;
+let fadeSpeed = 5;
+
+// fetch(apiUrl)
+//   .then((response) => {
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok: " + response.statusText);
+//     }
+//     return response.json();
+//   })
+//   .then((data) => {
+//     console.log("Weather data for Madrid:", data);
+//     weatherData = `Current weather in ${data.name}: ${data.weather[0].main}, ${data.main.temp}°C`;
+//   })
+//   .catch((error) => {
+//     console.error("There was a problem with the fetch operation:", error);
+//   });
+
 function preload() {
+  // =========================
+  // PICTURES
+  // =========================
   myFont = loadFont("assets/photos/font.ttf");
 
   sky = loadImage("assets/photos/sky.png");
@@ -106,6 +137,14 @@ function preload() {
 
   tracks = loadImage("assets/photos/track.png");
   train = loadImage("assets/photos/train.png");
+  ticketbooth = loadImage("assets/photos/ticketbooth.png");
+
+  // =========================
+  // SOUNDS
+  // =========================
+  birdSound = loadSound("assets/sounds/birds.mp3");
+  planeSound = loadSound("assets/sounds/plane.mp3");
+  poolSound = loadSound("assets/sounds/pool.mp3");
 }
 
 function setup() {
@@ -191,9 +230,28 @@ function draw() {
   drawMetroCarScene(centerX, offsetY);
   pop();
 
+  let sceneStart = 0;
+  let sceneEnd = 1000;
+
+  // if (scrollY >= sceneStart && scrollY <= sceneEnd) {
+  //   let vol = map(scrollY, sceneStart, sceneStart + 200, 0, 1);
+  //   vol = constrain(vol, 0, 1);
+
+  //   birdSound.setVolume(vol, 0.5);
+  //   planeSound.setVolume(vol, 0.5);
+  //   poolSound.setVolume(vol, 0.5);
+  // } else {
+  //   // leave scene
+  //   let vol = map(scrollY, sceneEnd, sceneEnd + 200, 1, 0);
+  //   vol = constrain(vol, 0, 1);
+  //   birdSound.setVolume(vol, 0.5);
+  //   planeSound.setVolume(vol, 0.5);
+  //   poolSound.setVolume(vol, 0.5);
+  // }
+
   // Draw a border around the canvas
   push();
-  stroke(0);
+  stroke(255);
   strokeWeight(4);
   noFill();
   rect(centerX, offsetY, collageWidth, collageHeight);
@@ -208,6 +266,29 @@ function drawSkyScene(centerX, offsetY) {
   let sunX = centerX + collageWidth - sunSize;
   image(sun, sunX, offsetY, sunSize, sunSize);
 
+  let hovered =
+    mouseX > sunX &&
+    mouseX < sunX + sunSize &&
+    mouseY > offsetY &&
+    mouseY < offsetY + sunSize;
+
+  if (hovered) {
+    textAlpha += fadeSpeed;
+  } else {
+    textAlpha -= fadeSpeed;
+  }
+  textAlpha = constrain(textAlpha, 0, 255);
+
+  if (textAlpha > 0) {
+    textAlign(CENTER, CENTER);
+    textFont(myFont);
+    textSize(42);
+    textStyle(BOLD);
+    noStroke();
+
+    fill(0, 76, 155, textAlpha);
+    text(weatherData, centerX + 775, offsetY + 400);
+  }
   if (growing) {
     sunSize += 1;
     if (sunSize >= 600) growing = false;
@@ -647,8 +728,6 @@ function drawMetroEntranceScene(centerX, offsetY) {
   image(ticketgate, centerX + 610, offsetY + 3280, 650, 600);
   image(ticketgate, centerX + 940, offsetY + 3280, 650, 600);
 
-  image(metrogroup, centerX, offsetY + 3200, 1500, 800);
-
   let gatePositions = [
     centerX + 250,
     centerX + 600,
@@ -693,11 +772,37 @@ function drawMetroCarScene(centerX, offsetY) {
   image(tracks, centerX - 150, offsetY + 4150, 1800, 700);
 
   //--- TRAIN MOVEMENT ---
-  const duration = 9000;
+  const duration = 7000;
   const elapsed = (millis() - startTime) % duration;
   const progress = elapsed / duration;
-
   const xTrain = lerp(25000, -20050, progress);
+
+  // --- TRAIN HEADLIGHTS ---
+  let headlightX = xTrain;
+  let headlightY = offsetY + 3950;
+
+  noStroke();
+
+  for (let i = 0; i < 200; i++) {
+    let alpha = map(i, 0, 200, 120, 0);
+    fill(255, 255, 200, alpha);
+
+    ellipse(headlightX - i * 3, headlightY, 200 + i * 4, 120 + i * 2);
+  }
+
+  let metroX = centerX + 150 + 600;
+  let metroY = offsetY + 3400 + 325;
+
+  let d = dist(metroX, metroY, headlightX, headlightY);
+
+  // map brightness based on distance
+  let brightness = map(d, 0, 1200, 255, 100);
+  brightness = constrain(brightness, 100, 255);
+
+  push();
+  tint(brightness, brightness, brightness);
+  image(metrogroup, centerX + 150, offsetY + 3400, 1200, 650);
+  pop();
 
   // --- SHAKE LOGIC ---
   let isOnScreen = xTrain < 6000 && xTrain > -8000;
@@ -721,4 +826,18 @@ function mouseWheel(event) {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function mousePressed() {
+  userStartAudio();
+
+  // if (!birdSound.isPlaying()) {
+  //   birdSound.loop();
+  //   planeSound.loop();
+  //   poolSound.loop();
+
+  //   birdSound.setVolume(0);
+  //   planeSound.setVolume(0);
+  //   poolSound.setVolume(0);
+  // }
 }
