@@ -260,7 +260,7 @@ function draw() {
 
 function drawSkyScene(centerX, offsetY) {
   // SKY
-  image(sky, centerX, offsetY, collageWidth, 1200);
+  image(sky, centerX, offsetY, collageWidth, 1800);
 
   // SUN
   let sunX = centerX + collageWidth - sunSize;
