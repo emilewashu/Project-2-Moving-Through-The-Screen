@@ -5,9 +5,10 @@ let sky, sun, birds, plane;
 let pool, barwindow, woman1, woman2;
 let facade, cat;
 let street, guard, cycler, scooter, performer, pigeon, crowd;
-let group1, group2, group3;
-let metrosign, metroimage1, metroimage2, metroimage3, homeless;
-let concretewall, metrostairs, metrocar, graffiti;
+let group1, group2, metrogroup;
+let metrosign, metroimage1, ticketgate, homeless, confusedman, manonphone;
+let concretewall, metrostairs, graffiti, walking, stairs;
+let tracks, train;
 
 // =========================
 // GLOBALS
@@ -40,7 +41,7 @@ let catInterval = 100;
 let dogTrail = [];
 
 const collageWidth = 1500;
-const collageHeight = 5300;
+const collageHeight = 5000;
 
 let shakeDuration = 0;
 let shakeTimer = 0;
@@ -50,51 +51,66 @@ let spanishClothes;
 let musicText = "♩♬♭♫♯≭";
 let musicTrail = [];
 
+let stairProgress = 0;
+
 let homelessTrail = [];
-let homelessText = "zzzzzz";
+let homelessText = "????????";
 let homelessIndex = 0;
 let homelessInterval = 80;
 
+let gateTrail = [];
+let gateWords = ["BEEP!", "VALIDADO!", "TAP!", "SUBE!", "PUERTA!", "CERRADA!"];
+
+let shakeX = 0;
+let shakeY = 0;
+
 function preload() {
-  myFont = loadFont("assets/font.ttf");
+  myFont = loadFont("assets/photos/font.ttf");
 
-  sky = loadImage("assets/sky.png");
-  sun = loadImage("assets/cornersun.png");
-  birds = loadImage("assets/birds.gif");
-  plane = loadImage("assets/plane.png");
+  sky = loadImage("assets/photos/sky.png");
+  sun = loadImage("assets/photos/cornersun.png");
+  birds = loadImage("assets/photos/birds.gif");
+  plane = loadImage("assets/photos/plane.png");
 
-  pool = loadImage("assets/pool.png");
-  barwindow = loadImage("assets/newwindow.png");
-  woman1 = loadImage("assets/woman1.png");
-  woman2 = loadImage("assets/woman2.png");
+  pool = loadImage("assets/photos/pool.png");
+  barwindow = loadImage("assets/photos/newwindow.png");
+  woman1 = loadImage("assets/photos/woman1.png");
+  woman2 = loadImage("assets/photos/woman2.png");
 
-  facade = loadImage("assets/newfacade.png");
-  cat = loadImage("assets/catsleeping.png");
-  dog = loadImage("assets/dog.png");
+  facade = loadImage("assets/photos/newfacade.png");
+  cat = loadImage("assets/photos/catsleeping.png");
+  dog = loadImage("assets/photos/dog.png");
 
-  street = loadImage("assets/palace.png");
-  guard = loadImage("assets/guard.png");
-  cycler = loadImage("assets/cycler.png");
-  crowd = loadImage("assets/crowd.png");
+  street = loadImage("assets/photos/palace.png");
+  guard = loadImage("assets/photos/guard.png");
+  cycler = loadImage("assets/photos/cycler.png");
+  crowd = loadImage("assets/photos/crowd.png");
 
-  group1 = loadImage("assets/group1.png");
-  group2 = loadImage("assets/group2.png");
+  group1 = loadImage("assets/photos/group1.png");
+  group2 = loadImage("assets/photos/group2.png");
 
-  metroimage1 = loadImage("assets/metroimage1.jpg");
+  metroimage1 = loadImage("assets/photos/metrosign2.png");
+  ticketgate = loadImage("assets/photos/ticketgate.png");
+  metrogroup = loadImage("assets/photos/metrogroup.png");
 
-  metrostairs = loadImage("assets/metrostairs.png");
-  metrocar = loadImage("assets/metrocar.jpg");
-  metrosign = loadImage("assets/metrosign.png");
-  graffiti = loadImage("assets/graffiti.png");
-  homeless = loadImage("assets/homeless.png");
+  metrostairs = loadImage("assets/photos/metrostairs.png");
+  metrosign = loadImage("assets/photos/metrosign.png");
+  graffiti = loadImage("assets/photos/graffiti.png");
+  homeless = loadImage("assets/photos/confusedman.png");
+  walking = loadImage("assets/photos/walking.png");
+  stairs = loadImage("assets/photos/stairs.png");
 
-  performer = loadImage("assets/performer.png");
-  pigeon = loadImage("assets/pigeon.gif");
-  scooter = loadImage("assets/scooter.webp");
+  performer = loadImage("assets/photos/performer.png");
+  pigeon = loadImage("assets/photos/pigeon.gif");
+  scooter = loadImage("assets/photos/scooter.webp");
+
+  tracks = loadImage("assets/photos/track.png");
+  train = loadImage("assets/photos/train.png");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
   pixelDensity(1);
   startTime = millis();
   spanishClothes = [
@@ -162,29 +178,26 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  background(0);
   const centerX = (width - collageWidth) / 2;
   const offsetY = -scrollY;
 
-  if (scrollY > 3000 && shakeTimer <= 0) {
-    shakeDuration = 40;
-    shakeTimer = shakeDuration;
-  }
-
-  let shakeX = 0;
-  let shakeY = 0;
-
-  if (shakeTimer > 0) {
-    shakeX = random(-5, 5);
-    shakeY = random(-2, 2);
-    shakeTimer--;
-  }
+  push();
   translate(shakeX, shakeY);
-
   drawSkyScene(centerX, offsetY);
   drawTransition(centerX, offsetY);
   drawStreetScene(centerX, offsetY);
-  drawMetroScene(centerX, offsetY);
+  drawMetroEntranceScene(centerX, offsetY);
+  drawMetroCarScene(centerX, offsetY);
+  pop();
+
+  // Draw a border around the canvas
+  push();
+  stroke(0);
+  strokeWeight(4);
+  noFill();
+  rect(centerX, offsetY, collageWidth, collageHeight);
+  pop();
 }
 
 function drawSkyScene(centerX, offsetY) {
@@ -554,23 +567,23 @@ function drawStreetScene(centerX, offsetY) {
   image(cycler, xCycler, offsetY + 2450, 250, 250);
 }
 
-function drawMetroScene(centerX, offsetY) {
-  image(metrosign, centerX + 500, offsetY + 2080, 480, 700);
+function drawMetroEntranceScene(centerX, offsetY) {
+  image(metrosign, centerX + 470, offsetY + 2080, 550, 700);
   image(metrostairs, centerX, offsetY + 2520, collageWidth, 1220);
+  image(stairs, centerX, offsetY + 3720, collageWidth, 800);
 
-  //graffiti
+  /// --- METRO SIGN ---
   push();
-
-  translate(centerX + 220, offsetY + 2950);
-  rotate(PI / 13);
-  tint(0, 200);
+  translate(centerX + 1250, offsetY + 2930);
   imageMode(CENTER);
-  image(graffiti, 0, 0, 350, 350);
+  rotate(PI / 15);
+  image(metroimage1, 0, 0, 450, 1100);
   imageMode(CORNER);
   pop();
 
-  let homelessX = centerX + 1000;
-  let homelessY = 3170;
+  // --- HOMELESS MOVEMENT ---
+  let homelessX = centerX + 880;
+  let homelessY = 2825;
 
   if (frameCount % homelessInterval === 0) {
     let letter = homelessText.charAt(homelessIndex);
@@ -598,7 +611,7 @@ function drawMetroScene(centerX, offsetY) {
     translate(z.x, z.y + offsetY);
     textAlign(CENTER, CENTER);
     textSize(z.size);
-    fill(120, 120, 255, z.life);
+    fill(255, 255, 0, z.life);
     text(z.letter, 0, 0);
     pop();
 
@@ -606,9 +619,95 @@ function drawMetroScene(centerX, offsetY) {
       homelessTrail.splice(i, 1);
     }
   }
-  image(homeless, centerX + 1000, offsetY + 3170, 300, 400);
+  image(homeless, centerX + 850, offsetY + 2900, 350, 500);
 
-  image(metrocar, centerX, offsetY + 3740, collageWidth, 1200);
+  // --- WALKING MOVEMENT ---
+  if (scrollY > 2000) {
+    stairProgress += 0.001;
+    stairProgress = constrain(stairProgress, 0, 1);
+  }
+
+  let startX = centerX + 600;
+  let startY = offsetY + 2850;
+  let endY = offsetY + 2450;
+  let stepBounce = sin(frameCount * 0.25) * 6;
+
+  let y = lerp(startY, endY, stairProgress) + stepBounce;
+  let scaleSize = lerp(1, 0.6, stairProgress);
+
+  push();
+  translate(startX, y);
+  scale(scaleSize);
+  image(walking, 0, 0, 350, 400);
+  pop();
+
+  // --- METRO GATES ---
+  image(ticketgate, centerX - 50, offsetY + 3280, 650, 600);
+  image(ticketgate, centerX + 280, offsetY + 3280, 650, 600);
+  image(ticketgate, centerX + 610, offsetY + 3280, 650, 600);
+  image(ticketgate, centerX + 940, offsetY + 3280, 650, 600);
+
+  image(metrogroup, centerX, offsetY + 3200, 1500, 800);
+
+  let gatePositions = [
+    centerX + 250,
+    centerX + 600,
+    centerX + 950,
+    centerX + 1300,
+  ];
+
+  if (frameCount % 50 === 0) {
+    let gateX = random(gatePositions);
+
+    gateTrail.push({
+      x: gateX,
+      y: 3320,
+      vx: random(-2, 2),
+      vy: random(-3, -1),
+      life: 255,
+      word: random(gateWords),
+    });
+  }
+
+  for (let i = gateTrail.length - 1; i >= 0; i--) {
+    let t = gateTrail[i];
+
+    t.x += t.vx;
+    t.y += t.vy;
+    t.life -= 3;
+
+    push();
+    textAlign(CENTER, CENTER);
+    textSize(36);
+    fill(0, 255, 100, t.life);
+    text(t.word, t.x, t.y + offsetY);
+    pop();
+
+    if (t.life <= 0) {
+      gateTrail.splice(i, 1);
+    }
+  }
+}
+
+function drawMetroCarScene(centerX, offsetY) {
+  image(tracks, centerX - 150, offsetY + 4150, 1800, 700);
+
+  //--- TRAIN MOVEMENT ---
+  const duration = 9000;
+  const elapsed = (millis() - startTime) % duration;
+  const progress = elapsed / duration;
+
+  const xTrain = lerp(25000, -20050, progress);
+
+  // --- SHAKE LOGIC ---
+  let isOnScreen = xTrain < 6000 && xTrain > -8000;
+
+  if (isOnScreen && scrollY > 2000) {
+    shakeX = random(-5, 5);
+    shakeY = random(-3, 3);
+  }
+
+  image(train, xTrain, offsetY + 3720, 6000, 800);
 }
 
 // =========================
