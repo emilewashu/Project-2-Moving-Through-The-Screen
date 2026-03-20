@@ -8,7 +8,7 @@ let street, guard, cycler, scooter, performer, pigeon, crowd;
 let group1, group2, metrogroup, ticketbooth;
 let metrosign, metroimage1, ticketgate, homeless, confusedman, manonphone;
 let concretewall, metrostairs, graffiti, walking, stairs;
-let train;
+let train, womanstanding;
 
 // =========================
 // SOUNDS
@@ -138,6 +138,7 @@ function preload() {
 
   train = loadImage("assets/photos/train.png");
   ticketbooth = loadImage("assets/photos/ticketbooth.png");
+  womanstanding = loadImage("assets/photos/womanstanding.png");
 
   // =========================
   // SOUNDS
@@ -364,7 +365,7 @@ function drawSkyScene(centerX, offsetY) {
   // DRAW POOL
   // ------------------------------------
 
-  image(pool, centerX, offsetY + 1250, collageWidth, 550);
+  image(pool, centerX, offsetY + 1050, collageWidth, 750);
   if (growing) {
     moveY += 0.2;
     if (moveY >= 40) growing = false;
@@ -381,7 +382,7 @@ function drawSkyScene(centerX, offsetY) {
 
     womenTrail.push({
       x: random([centerX + 700, centerX + 900]),
-      y: 1450 + moveY,
+      y: 1350 + moveY,
       vx: 2.5,
       vy: -2.5,
       life: 255,
@@ -391,8 +392,8 @@ function drawSkyScene(centerX, offsetY) {
     womenIndex = (womenIndex + 1) % womenText.length;
   }
 
-  image(woman1, centerX + 600, offsetY + 1450 + moveY, 140, 200);
-  image(woman2, centerX + 800, offsetY + 1450 + moveY, 140, 200);
+  image(woman1, centerX + 600, offsetY + 1350 + moveY, 140, 200);
+  image(woman2, centerX + 800, offsetY + 1350 + moveY, 140, 200);
 
   for (let i = womenTrail.length - 1; i >= 0; i--) {
     let t = womenTrail[i];
@@ -694,6 +695,21 @@ function drawMetroEntranceScene(centerX, offsetY) {
   }
   image(homeless, centerX + 850, offsetY + 2900 + 600, 350, 500);
 
+  let glow = 60 + sin(frameCount * 0.04) * 30;
+  image(womanstanding, centerX + 350, offsetY + 3650, 300, 450);
+  push();
+  noStroke();
+  fill(100, 200, 255, glow);
+  triangle(
+    centerX + 510,
+    offsetY + 3720,
+    centerX + 510,
+    offsetY + 3680,
+    centerX + 460,
+    offsetY + 3750
+  );
+  pop();
+
   // --- WALKING MOVEMENT ---
   if (scrollY > 2000) {
     stairProgress += 0.001;
@@ -733,7 +749,6 @@ function drawMetroEntranceScene(centerX, offsetY) {
     centerX + 950,
     centerX + 1300,
   ];
-  
 
   if (frameCount % 50 === 0) {
     let gateX = random(gatePositions);
@@ -804,7 +819,7 @@ function drawMetroCarScene(centerX, offsetY) {
   // --- SHAKE LOGIC ---
   let isOnScreen = xTrain < 6000 && xTrain > -8000;
 
-  if (isOnScreen && scrollY > 2000) {
+  if (isOnScreen && scrollY > 3000) {
     shakeX = random(-5, 5);
     shakeY = random(-3, 3);
   }
