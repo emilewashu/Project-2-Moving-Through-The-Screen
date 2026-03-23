@@ -233,22 +233,6 @@ function draw() {
 
   let sceneStart = 0;
   let sceneEnd = 1000;
-
-  // if (scrollY >= sceneStart && scrollY <= sceneEnd) {
-  //   let vol = map(scrollY, sceneStart, sceneStart + 200, 0, 1);
-  //   vol = constrain(vol, 0, 1);
-
-  //   birdSound.setVolume(vol, 0.5);
-  //   planeSound.setVolume(vol, 0.5);
-  //   poolSound.setVolume(vol, 0.5);
-  // } else {
-  //   // leave scene
-  //   let vol = map(scrollY, sceneEnd, sceneEnd + 200, 1, 0);
-  //   vol = constrain(vol, 0, 1);
-  //   birdSound.setVolume(vol, 0.5);
-  //   planeSound.setVolume(vol, 0.5);
-  //   poolSound.setVolume(vol, 0.5);
-  // }
 }
 
 function drawSkyScene(centerX, offsetY) {
@@ -576,6 +560,21 @@ function drawStreetScene(centerX, offsetY) {
   noTint();
   image(group2, centerX + 600, offsetY + 2350 + 600, 250, 250);
 
+  let glow = 80 + sin(frameCount * 0.1) * 50;
+
+  push();
+  noStroke();
+  fill(255, 255, 255, glow);
+  triangle(
+    centerX + 801,
+    offsetY + 2993,
+    centerX + 917,
+    offsetY + 2956,
+    centerX + 905,
+    offsetY + 3102
+  );
+  pop();
+
   // --- MUSIC TRAIL ---
   let performerX = centerX + 180;
   let performerY = 2310 + 600;
@@ -843,13 +842,18 @@ function windowResized() {
 function mousePressed() {
   userStartAudio();
 
-  // if (!birdSound.isPlaying()) {
-  //   birdSound.loop();
-  //   planeSound.loop();
-  //   poolSound.loop();
+  const centerX = (width - collageWidth) / 2;
+  const offsetY = -scrollY;
 
-  //   birdSound.setVolume(0);
-  //   planeSound.setVolume(0);
-  //   poolSound.setVolume(0);
-  // }
+  // Raw screen coords
+  console.log("Screen:", mouseX, mouseY);
+
+  // Transformed (collage/world coords)
+  let worldX = mouseX - centerX;
+  let worldY = mouseY - offsetY;
+
+  console.log("World:", worldX, worldY);
+
+  // Optional: include centerX & offsetY for reference
+  console.log("centerX:", centerX, "offsetY:", offsetY);
 }
