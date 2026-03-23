@@ -78,20 +78,20 @@ let textAlpha = 0;
 let fadeSpeed = 5;
 let skyExtra = 600;
 
-// fetch(apiUrl)
-//   .then((response) => {
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok: " + response.statusText);
-//     }
-//     return response.json();
-//   })
-//   .then((data) => {
-//     console.log("Weather data for Madrid:", data);
-//     weatherData = `Current weather in ${data.name}: ${data.weather[0].main}, ${data.main.temp}°C`;
-//   })
-//   .catch((error) => {
-//     console.error("There was a problem with the fetch operation:", error);
-//   });
+fetch(apiUrl)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok: " + response.statusText);
+    }
+    return response.json();
+  })
+  .then((data) => {
+    console.log("Weather data for Madrid:", data);
+    weatherData = `Current weather in ${data.name}: ${data.weather[0].main}, ${data.main.temp}°C`;
+  })
+  .catch((error) => {
+    console.error("There was a problem with the fetch operation:", error);
+  });
 
 function preload() {
   // =========================
